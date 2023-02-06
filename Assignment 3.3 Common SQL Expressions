@@ -1,0 +1,7 @@
+In the following query, 5 new values are added for the category column. Certain rows are assigned the value based off of their title. One category is removed.
+
+Query:
+INSERT INTO category(name) VALUES ('Thriller'), ('Crime'), ('Mystery'), ('Romance'), ('War')
+SELECT * FROM film WHERE title = 'African Egg'
+UPDATE film_category SET category_id = 17 WHERE film_id = 5
+DELETE FROM category WHERE name = 'Mystery'
