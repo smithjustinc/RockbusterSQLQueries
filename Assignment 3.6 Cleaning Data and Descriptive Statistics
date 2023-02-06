@@ -1,0 +1,22 @@
+The following queries are used to identify and clean data in the Rockbuster Data Sets. The queries also include descriptive statistics of the data sets.
+
+Queries:
+Identifying duplicate data:
+SELECT film_id, title, description, release_year, language_id, rental_rate, length, replacement_cost, last_update, special_features, fulltext FROM film GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 HAVING COUNT(*) >1
+SELECT customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date, last_update, active FROM customer GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 HAVING COUNT(*) >1
+
+Identifying non-uniform data:
+SELECT DISTINCT film_id, title, description, release_year, language_id, rental_rate, length, replacement_cost, last_update, special_features, fulltext FROM film
+SELECT DISTINCT customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date, last_update, active FROM customer
+
+Identifying missing data:
+SELECT * FROM film WHERE film_id = NULL OR title = NULL OR description = NULL OR release_year = NULL OR language_id = NULL OR rental_rate = NULL OR length = NULL OR replacement_cost = NULL OR last_update = NULL OR special_features = NULL OR fulltext = NULL
+SELECT * FROM customer WHERE customer_id = NULL OR store_id = NULL OR first_name = NULL OR last_name = NULL OR email = NULL OR address_id = NULL OR activebool = NULL OR create_date = NULL OR last_update = NULL OR active = NULL
+
+Film Table Descriptive Statistics:
+SELECT MIN(film_id) AS “film_min”, MAX(film_id) AS “film_max”, AVG(film_id) AS “film_avg”, MIN(release_year) AS “release_year_min”, MAX(release_year) AS “release_year_max”, AVG(release_year) AS “release_year_average”, MIN(language_id) AS “language_id_min”, MAX(language_id) AS “language_id_max”, AVG(language_id) AS “language_id_average”, MIN(rental_rate) AS “rental_rate_min”, MAX(rental_rate) AS “rental_rate_max”, AVG(rental_rate) AS “rental_rate_average”, MIN(length) AS “length_min”, MAX(length) AS “length_max”, AVG(length) AS “length_avg”, MIN(replacement_cost) AS “replacement_cost_min”, MAX(replacement_cost) AS “replacement_cost_max”, AVG(replacement_cost) AS “replacement_cost_avg” FROM film
+SELECT MODE() WITHIN GROUP (ORDER BY title) AS  title_mode, MODE() WITHIN GROUP (ORDER BY description) AS description_mode, MODE() WITHIN GROUP(ORDER BY last_update) AS last_update_mode, MODE() WITHIN GROUP(ORDER BY special_features) AS special_features_mode, MODE() WITHIN GROUP(ORDER BY fulltext) AS fulltext_mode FROM film
+
+Customer Table Descriptive Statistics:
+SELECT MIN(customer_id) AS “customer_id_min”, MAX(customer_id) AS “customer_id_max”, AVG(customer_id) AS “customer_id_avg”, MIN(store_id) AS “store_id_min”, MAX(store_id) AS “store_id_max”, AVG(store_id) AS “store_id_avg”, MIN(address_id) AS “address_id_min”, MAX(address_id) AS “address_id_max”, AVG(address_id) AS “address_id_avg”, MIN(active) AS “active_min”, MAX(active) AS “active_max”, AVG(active) AS “active_avg” FROM customer
+SELECT MODE() WITHIN GROUP(ORDER BY first_name) AS first_name_mode, MODE() WITHIN GROUP(ORDER BY last_name) AS last_name_mode, MODE() WITHIN GROUP(ORDER BY email) AS email_mode, MODE() WITHIN GROUP(ORDER BY activebool) AS active_bool_mode, MODE() WITHIN GROUP(ORDER BY create_date) AS create_date_mode, MODE() WITHIN GROUP(ORDER BY last_update) AS last_update_mode FROM customer
