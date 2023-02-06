@@ -1,0 +1,8 @@
+In the following queries, tables are joined to identify the country and cities with the most customers. The final query identifies the top 5 customers with the largest sum of money spent.
+
+Queries:
+SELECT A.country, COUNT(D.customer_id) AS number_of_customers FROM country A INNER JOIN city B ON A.country_id = B.country_id INNER JOIN address C ON B.city_id = C.city_id INNER JOIN customer D ON C.address_id = D.address_id GROUP BY country ORDER BY COUNT(customer_id) DESC LIMIT 10
+
+SELECT B.city, A.country, COUNT(D.customer_id) AS number_of_customers FROM country A INNER JOIN city B ON A.country_id = B.country_id INNER JOIN address C ON B.city_id = C.city_id INNER JOIN customer D ON C.address_id = D.address_id WHERE A.country IN ('India', 'China', 'United States', 'Japan', 'Mexico', 'Brazil', 'Russian Federation', 'Philippines', 'Turkey', 'Indonesia') GROUP BY city, country ORDER BY COUNT(customer_id) DESC LIMIT 10
+
+SELECT B.city, A.country, E.customer_id, D.first_name, D.last_name, SUM(E.amount) AS total_amount_paid FROM country A INNER JOIN city B ON A.country_id = B.country_id INNER JOIN address C ON B.city_id = C.city_id INNER JOIN customer D ON C.address_id = D.address_id INNER JOIN payment E ON D.customer_id = E.customer_id WHERE B.city IN ('Aurora', 'Atlixco', 'Xintai', 'Adoni', 'Dhule (Dhulia)', 'Kurashiki', 'Pingxiang', 'Sivas', 'Sivas', 'Celaya', 'So Leopoldo') GROUP BY E.customer_id, D.first_name, D.last_name, city, country ORDER BY SUM(amount) DESC LIMIT 5
