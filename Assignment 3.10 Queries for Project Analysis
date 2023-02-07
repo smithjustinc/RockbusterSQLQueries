@@ -1,0 +1,35 @@
+The following are the queries used to answer key questions for the final analysis of Rockbuster.
+
+Queries:
+Descriptive Statistics of Film Table:
+SELECT MIN(film_id) AS “film_min”, MAX(film_id) AS “film_max”, AVG(film_id) AS “film_avg”, MIN(release_year) AS “release_year_min”, MAX(release_year) AS “release_year_max”, AVG(release_year) AS “release_year_average”, MIN(language_id) AS “language_id_min”, MAX(language_id) AS “language_id_max”, AVG(language_id) AS “language_id_average”, MIN(rental_rate) AS “rental_rate_min”, MAX(rental_rate) AS “rental_rate_max”, AVG(rental_rate) AS “rental_rate_average”, MIN(length) AS “length_min”, MAX(length) AS “length_max”, AVG(length) AS “length_avg”, MIN(replacement_cost) AS “replacement_cost_min”, MAX(replacement_cost) AS “replacement_cost_max”, AVG(replacement_cost) AS “replacement_cost_avg” FROM film
+SELECT MODE() WITHIN GROUP (ORDER BY title) AS  title_mode, MODE() WITHIN GROUP (ORDER BY description) AS description_mode, MODE() WITHIN GROUP(ORDER BY last_update) AS last_update_mode, MODE() WITHIN GROUP(ORDER BY special_features) AS special_features_mode, MODE() WITHIN GROUP(ORDER BY fulltext) AS fulltext_mode FROM film
+
+Descriptive Statistics of Customer Table:
+SELECT MIN(customer_id) AS “customer_id_min”, MAX(customer_id) AS “customer_id_max”, AVG(customer_id) AS “customer_id_avg”, MIN(store_id) AS “store_id_min”, MAX(store_id) AS “store_id_max”, AVG(store_id) AS “store_id_avg”, MIN(address_id) AS “address_id_min”, MAX(address_id) AS “address_id_max”, AVG(address_id) AS “address_id_avg”, MIN(active) AS “active_min”, MAX(active) AS “active_max”, AVG(active) AS “active_avg” FROM customer
+SELECT MODE() WITHIN GROUP(ORDER BY first_name) AS first_name_mode, MODE() WITHIN GROUP(ORDER BY last_name) AS last_name_mode, MODE() WITHIN GROUP(ORDER BY email) AS email_mode, MODE() WITHIN GROUP(ORDER BY activebool) AS active_bool_mode, MODE() WITHIN GROUP(ORDER BY create_date) AS create_date_mode, MODE() WITHIN GROUP(ORDER BY last_update) AS last_update_mode FROM customer
+
+Top 10 Countries with the Most Customers:
+SELECT D.country, COUNT(A.customer_id) AS total_customers FROM customer A INNER JOIN address B ON A.address_id = B.address_id INNER JOIN city C ON B.city_id = C.city_id INNER JOIN country D ON C.country_id = D.country_id GROUP BY D.country ORDER BY COUNT(A.customer_id) DESC LIMIT 10
+
+Top 10 Cities Within the Top 10 Countries:
+SELECT B.city, A.country, COUNT(D.customer_id) AS total_customers FROM country A INNER JOIN city B ON A.country_id = B.country_id INNER JOIN address C ON B.city_id = C.city_id INNER JOIN customer D ON C.address_id = D.address_id WHERE A.country IN ('India', 'China', 'United States', 'Japan', 'Mexico', 'Brazil', 'Russian Federation', 'Philippines', 'Turkey', 'Indonesia') GROUP BY city, country ORDER BY COUNT(customer_id) DESC LIMIT 10
+
+Top 5 Customers in the Top 10 Cities:
+SELECT B.city, A.country, E.customer_id, D.first_name, D.last_name, SUM(E.amount) AS total_amount_paid FROM country A INNER JOIN city B ON A.country_id = B.country_id INNER JOIN address C ON B.city_id = C.city_id INNER JOIN customer D ON C.address_id = D.address_id INNER JOIN payment E ON D.customer_id = E.customer_id WHERE B.city IN ('Aurora', 'Atlixco', 'Xintai', 'Adoni', 'Dhule (Dhulia)', 'Kurashiki', 'Pingxiang', 'Sivas', 'Sivas', 'Celaya', 'So Leopoldo') GROUP BY E.customer_id, D.first_name, D.last_name, city, country ORDER BY SUM(amount) DESC LIMIT 5
+
+Which movies contributed the most/least to revenue gain?
+SELECT A.title AS title, SUM(D.amount) AS total_earned FROM film A INNER JOIN inventory B ON A.film_id = B.film_id INNER JOIN rental C ON B.inventory_id = C.inventory_id INNER JOIN payment D ON C.rental_id = D.rental_id GROUP BY A.title ORDER BY SUM(D.amount) DESC LIMIT 10
+SELECT A.title AS title, SUM(D.amount) AS total_earned FROM film A INNER JOIN inventory B ON A.film_id = B.film_id INNER JOIN rental C ON B.inventory_id = C.inventory_id INNER JOIN payment D ON C.rental_id = D.rental_id GROUP BY A.title ORDER BY SUM(D.amount) ASC LIMIT 11
+
+What was the average rental duration for all videos?
+SELECT MIN(rental_duration) AS smallest_rental_duration, AVG(rental_duration) AS average_rental_duration, MAX(rental_duration) AS max_rental_duration FROM film
+
+Which countries are Rockbuster customers based in?
+SELECT D.country, COUNT(A.customer_id) AS total_customers FROM customer A INNER JOIN address B ON A.address_id = B.address_id INNER JOIN city C ON B.city_id = C.city_id INNER JOIN country D ON C.country_id = D.country_id GROUP BY D.country ORDER BY COUNT(A.customer_id) DESC LIMIT 10
+
+Where are customers with a high lifetime value?
+SELECT MIN(create_date) AS earliest_account_created, MAX(create_date) AS most_recent_account_created FROM customer
+
+Do sales figures vary between geographic regions?
+SELECT A.country, SUM(E.amount) AS total_earned FROM country A INNER JOIN city B ON A.country_id = B.country_id INNER JOIN address C ON B.city_id = C.city_id INNER JOIN customer D ON C.address_id = D.address_id INNER JOIN payment E ON D.customer_id = E.customer_id GROUP BY A.country ORDER BY SUM(E.amount) DESC LIMIT 10
